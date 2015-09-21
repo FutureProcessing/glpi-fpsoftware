@@ -30,6 +30,9 @@
          <en>
             <tag>Inventory</tag>
          </en>
+		 <lang>
+			<tag>Inventory</tag>
+		 </lang>
    </tags>
    <screenshots>
       <screenshot>https://cloud.githubusercontent.com/assets/3634020/8588884/ca0d363a-260f-11e5-9a7c-8be8b4600eb2.png</screenshot>
