@@ -13,13 +13,15 @@
    </description>
    <homepage>https://github.com/FutureProcessing/glpi-fpsoftware</homepage>
    <download>https://github.com/FutureProcessing/glpi-fpsoftware/archive/master.zip</download>
+   <issues>https://github.com/FutureProcessing/glpi-fpsoftware/issues</issues>
+   <readme>https://github.com/FutureProcessing/glpi-fpsoftware/blob/master/README.md</readme>
    <authors>
       <author>Future Processing</author>
    </authors>
    <versions>
       <version>
           <num>1.0</num>
-          <compatibility>0.85.x</compatibility>
+          <compatibility>0.85</compatibility>
       </version>
    </versions>
    <langs>
@@ -31,12 +33,12 @@
             <tag>Inventory</tag>
          </en>
 		 <lang>
-			<tag>Inventory</tag>
+            <tag>Inventory</tag>
 		 </lang>
    </tags>
    <screenshots>
       <screenshot>https://cloud.githubusercontent.com/assets/3634020/8588884/ca0d363a-260f-11e5-9a7c-8be8b4600eb2.png</screenshot>
       <screenshot>https://cloud.githubusercontent.com/assets/3634020/8588883/ca0995ca-260f-11e5-9e55-31dd860081ea.png</screenshot>
-	  <screenshot>https://cloud.githubusercontent.com/assets/3634020/8588885/ca1083b2-260f-11e5-85e3-0182aa70e4b4.png</screenshot>
+      <screenshot>https://cloud.githubusercontent.com/assets/3634020/8588885/ca1083b2-260f-11e5-85e3-0182aa70e4b4.png</screenshot>
    </screenshots>
 </root>
