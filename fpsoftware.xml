@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <root>
    <name>FP Software</name>
    <key>fpsoftware</key>
@@ -29,7 +28,7 @@
    <license><![CDATA[GPL v2+]]></license>
    <tags>
          <en>
-            <tag>fpsoftware</tag>
+            <tag>Inventory</tag>
          </en>
    </tags>
    <screenshots>
