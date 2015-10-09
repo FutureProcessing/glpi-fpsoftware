@@ -31,8 +31,6 @@ class PluginFpsoftwareUsersLicenses extends CommonDBRelation {
                     glpi_users_softwarelicenses users_softwarelicenses
 	                JOIN glpi_softwarelicenses softwarelicenses ON users_softwarelicenses.softwarelicenses_id = softwarelicenses.id
                     JOIN glpi_users users ON users_softwarelicenses.users_id = users.id
-                    LEFT JOIN glpi_computers computers ON users.id = computers.users_id
-                    LEFT JOIN glpi_locations locations ON computers.locations_id = locations.id
                     LEFT JOIN glpi_softwarelicensetypes softwarelicensetypes ON softwarelicenses.softwarelicensetypes_id = softwarelicensetypes.id
                   WHERE
                     softwarelicenses.softwares_id = '$softwareId'";
@@ -46,8 +44,8 @@ class PluginFpsoftwareUsersLicenses extends CommonDBRelation {
                     softwarelicensetypes.name AS license_type,
                     users.id AS user_id,
                     users.name AS user_name,
-                    computers.id AS computer_id,
-                    computers.name AS computer_name,
+                    GROUP_CONCAT(computers.id SEPARATOR ';|;') AS computer_ids,
+                    GROUP_CONCAT(computers.name SEPARATOR ';|;') AS computer_names,
                     locations.id AS location_id,
                     locations.name AS location_name
                   FROM
@@ -59,6 +57,7 @@ class PluginFpsoftwareUsersLicenses extends CommonDBRelation {
                     LEFT JOIN glpi_softwarelicensetypes softwarelicensetypes ON softwarelicenses.softwarelicensetypes_id = softwarelicensetypes.id
                   WHERE
                     softwarelicenses.softwares_id = '$softwareId'
+                  GROUP BY user_id
                   ORDER BY $sort $order
                   LIMIT " . intval($start). "," . intval($_SESSION['glpilist_limit']);
     }
@@ -112,11 +111,11 @@ class PluginFpsoftwareUsersLicenses extends CommonDBRelation {
     }
 
     /**
-     * Show table wiht linked licenses to user
-     * @param User $user
+     * Show table with linked licenses to user
+     * @param Software $software
+     * @return bool
      */
     private static function showUsersLicenses(Software $software) {
-
         global $DB;
 
         $softwareId = $software->getField("id");
@@ -133,10 +132,20 @@ class PluginFpsoftwareUsersLicenses extends CommonDBRelation {
 
         if ($totalRecordsCount > 0) {
             while ($data = $DB->fetch_assoc($queryResult)) {
+                $computers = array();
+                if ($data['computer_ids']) {
+                    $computer_ids = explode(';|;', $data['computer_ids']);
+                    $computer_names = explode(';|;', $data['computer_names']);
+                    foreach ($computer_ids as $index => $computer_id) {
+                        $computers[] = " <a href='computer.form.php?id=".$computer_id."'>".$computer_names[$index]."</a>";
+                    }
+                }
+
                 echo "<tr class='tab_bg_1'>";
                 echo "<td class='left'><a href='softwarelicense.form.php?id=".$data['license_id']."'>".$data["license_name"]."</a> - ".$data["license_serial"]." (".$data["license_type"].") "."</td>";
                 echo "<td class='left'><a href='user.form.php?id=".$data['user_id']."'>".$data["user_name"]."</a></td>";
-                echo "<td class='left'><a href='computer.form.php?id=".$data['computer_id']."'>".$data["computer_name"]."</a></td>";
+                echo "<td class='left'>";
+                echo implode("<br /><br />", $computers)."</td>";
                 echo "<td class='left'><a href='location.form.php?id=".$data['location_id']."'>".$data["location_name"]."</a></td>";
                 echo "</tr>";
             }
