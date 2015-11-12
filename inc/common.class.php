@@ -41,11 +41,13 @@ class PluginFpsoftwareCommon extends CommonDBRelation {
       return $tab;
    }
 
-   /**
-    * Add relationship user -> license to database
-    * @param array $data
-    * @return boolean
-    */
+    /**
+     * Add relationship user -> license to database
+     * @param array $input
+     * @param array $options
+     * @param bool $history
+     * @return bool
+     */
    function add(array $input, $options=array(), $history=true) {
        if ( (int) $input['softwarelicenses_id'] <= 0 || (int) $input['users_id'] <= 0) {
            return false;
@@ -63,9 +65,13 @@ class PluginFpsoftwareCommon extends CommonDBRelation {
         return true;
    }
 
-   /**
-    * @see CommonDBTM::processMassiveActionsForOneItemtype()
-    **/
+    /**
+     * @see CommonDBTM::processMassiveActionsForOneItemtype()
+     * @param MassiveAction $ma
+     * @param CommonDBTM $item
+     * @param array $ids
+     * @return void
+     */
    static function processMassiveActionsForOneItemtype(MassiveAction $ma, CommonDBTM $item, array $ids) {
         switch ($ma->getAction()) {
             case 'deleteSelected':
@@ -79,9 +85,11 @@ class PluginFpsoftwareCommon extends CommonDBRelation {
         }
    }
 
-   /**
-    * @see CommonDBTM::doSpecificMassiveActions()
-    **/
+    /**
+     * @see CommonDBTM::doSpecificMassiveActions()
+     * @param array $input
+     * @return array
+     */
    function doSpecificMassiveActions($input=array()) {
 	   $res = array(
 		   'ok'			=> 0,
