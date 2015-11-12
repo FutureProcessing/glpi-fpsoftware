@@ -41,13 +41,16 @@
  *
  * @return array
  */
-function plugin_version_fpsoftware() {
-	return array('name' => "FP Software",
-		'version' => '1.0.0',
-		'author' => 'Future Processing',
-		'license' => 'GPLv2+',
-		'homepage' => 'http://www.future-processing.com',
-		'minGlpiVersion' => '0.84'); // For compatibility / no install in version < 0.80
+function plugin_version_fpsoftware()
+{
+    return array(
+        'name' => "FP Software",
+        'version' => '1.1.0',
+        'author' => 'Future Processing',
+        'license' => 'GPLv2+',
+        'homepage' => 'http://www.future-processing.com',
+        'minGlpiVersion' => '0.84'
+    ); // For compatibility / no install in version < 0.80
 }
 
 /**
@@ -59,10 +62,12 @@ function plugin_version_fpsoftware() {
  *
  * @return boolean
  */
-function plugin_fpsoftware_check_prerequisites() {
+function plugin_fpsoftware_check_prerequisites()
+{
     if (version_compare(GLPI_VERSION, '0.84', 'lt') || version_compare(GLPI_VERSION, '0.86', 'gt')) {
-		echo "This plugin requires GLPI >= 0.84 and GLPI <= 0.86";
-		return false;
+        echo "This plugin requires GLPI >= 0.84 and GLPI <= 0.86";
+
+        return false;
     }
 
     return true;
@@ -74,8 +79,9 @@ function plugin_fpsoftware_check_prerequisites() {
  * @param type $verbose
  * @return boolean
  */
-function plugin_fpsoftware_check_config($verbose = false) {
-	return true;
+function plugin_fpsoftware_check_config($verbose = false)
+{
+    return true;
 }
 
 /**
@@ -83,13 +89,17 @@ function plugin_fpsoftware_check_config($verbose = false) {
  *
  * @global array $PLUGIN_HOOKS
  */
-function plugin_init_fpsoftware() {
-	global $PLUGIN_HOOKS;
+function plugin_init_fpsoftware()
+{
+    global $PLUGIN_HOOKS;
 
-	$PLUGIN_HOOKS['csrf_compliant']['fpsoftware'] = true;
+    $PLUGIN_HOOKS['csrf_compliant']['fpsoftware'] = true;
 
-	Plugin::registerClass('PluginFpsoftwareCommon', array('addtabon' => array('SoftwareLicense')));
+    $PLUGIN_HOOKS['config_page']['fpsoftware'] = 'front/config.form.php';
+
+    Plugin::registerClass('PluginFpsoftwareCommon', array('addtabon' => array('SoftwareLicense')));
     Plugin::registerClass('PluginFpsoftwareUserdetails', array('addtabon' => array('User')));
     Plugin::registerClass('PluginFpsoftwareUsersLicenses', array('addtabon' => array('Software')));
     Plugin::registerClass('PluginFpsoftwareVersionhelper');
+    Plugin::registerClass('PluginFpsoftwareConfig');
 }
