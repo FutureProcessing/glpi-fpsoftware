@@ -3,8 +3,8 @@
 class PluginFpsoftwareConfig
 {
 
-    private $configContext = 'plugin.fpsoftware';
-    private $defaultValues = array(
+    private static $configContext = 'plugin.fpsoftware';
+    private static $defaultValues = array(
         'group_by_users' => 0,
     );
 
@@ -15,11 +15,11 @@ class PluginFpsoftwareConfig
      *
      * @return array
      */
-    function getConfigValues($options)
+    public static function getConfigValues($options)
     {
-        $config = Config::getConfigurationValues($this->configContext, $options);
+        $config = Config::getConfigurationValues(self::$configContext, $options);
 
-        return $config + $this->defaultValues;
+        return $config + self::$defaultValues;
     }
 
     /**
@@ -27,9 +27,9 @@ class PluginFpsoftwareConfig
      *
      * @param array $options
      */
-    function setConfigValues($options)
+    public static function setConfigValues($options)
     {
-        Config::setConfigurationValues($this->configContext, $options);
+        Config::setConfigurationValues(self::$configContext, $options);
     }
 
     /**
@@ -39,7 +39,7 @@ class PluginFpsoftwareConfig
     function showFormDisplay()
     {
 
-        $options = $this->getConfigValues(array('group_by_users'));
+        $options = self::getConfigValues(array('group_by_users'));
 
         echo "<form name='form' action=\"".Toolbox::getItemTypeFormURL(__CLASS__)."\" method='post'>";
         echo "<div class='center' id='tabsbody'>";

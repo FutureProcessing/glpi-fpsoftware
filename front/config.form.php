@@ -7,7 +7,7 @@ $config = new PluginFpsoftwareConfig();
 
 if (isset($_POST["update"])) {
     if (isset($_POST['group_by_users'])) {
-        $config->setConfigValues(array('group_by_users' => (int)(bool)$_POST['group_by_users']));
+        PluginFpsoftwareConfig::setConfigValues(array('group_by_users' => (int)(bool)$_POST['group_by_users']));
     }
     HTML::back();
 }
