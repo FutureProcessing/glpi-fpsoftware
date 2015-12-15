@@ -200,7 +200,7 @@ class PluginFpsoftwareUsersLicenses extends CommonDBRelation {
                 echo "</tr>";
             }
         }  else {
-            echo "<tr class='tab_bg_1'><td class='center' colspan='3'>No results.</td></tr>";
+            echo "<tr class='tab_bg_1'><td class='center' colspan='4'>No results.</td></tr>";
         }
 
         Html::printAjaxPager(self::getTypeName(2), $currentPage, $totalRecordsCount);
