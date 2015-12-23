@@ -28,7 +28,20 @@ GLPI 0.85.x
 ###Install instructions
 Just like all other plugins, just copy to plugins and install/enable from Administration/Plugins section.
 
-###What can be improved?
+If you want to display a sum of assigned computers and users in "Affected Computers" column you need to:
+- open inc/softwwarelicense.class.php (take a backup of this file before making any changes!);
+- look for following function - static function showForSoftware (Software $software);
+- around lines 780-787 modify following line of code:
 
-* plugin doesn’t affect original view of licenses, there is no “Affected Users” column which could be confronted with number of licenses;
+```
+$nb_assoc   = Computer_SoftwareLicense::countForLicense($data['id']);
+```
+
+to
+
+```
+$nb_assoc   = Computer_SoftwareLicense::countForLicense($data['id']) + PluginFpsoftwareCommon::countForLicense($data['id']);
+```
+
+###What can be improved?
 * plugin doesn’t validate total number of licenses with number of assigned licenses to users;
