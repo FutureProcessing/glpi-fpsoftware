@@ -1,7 +1,8 @@
 # glpi-fpsoftware
 GLPI plugin that allows to assign software to users.
+
 ## General Information
-By default GLPI doesn’t allow to assign software to a user. As we all know a lot of software is currently licensed in per user model. FP Software plugin allows you to assign software to a user and view all his/hers licenses.
+By default GLPI does not allow to assign software to a user. As we all know a lot of software is currently licensed in per user model. FP Software plugin allows you to assign software to a user and view all his/hers licenses.
 
 It changes how software/license asset looks like by providing new tab to license where you can assign users to software and another tab to software so you can see all users using the software (no matter which licenses they are using).
 
@@ -22,10 +23,10 @@ Global view of all licenses lists all users along with their machines, in that c
 
 In general this plugin makes GLPI more user-oriented instead of PC-oriented.
 
-###Requirements
-GLPI 0.85.x, 0.90.x
+### Requirements
+GLPI 0.85.x, 0.90.x, 9.1.x
 
-###Install instructions
+### Install instructions
 Just like all other plugins, just copy to plugins and install/enable from Administration/Plugins section.
 
 If you want to display a sum of assigned computers and users in "Affected Computers" column you need to:
@@ -43,5 +44,5 @@ to
 $nb_assoc   = Computer_SoftwareLicense::countForLicense($data['id']) + PluginFpsoftwareCommon::countForLicense($data['id']);
 ```
 
-###What can be improved?
-* plugin doesn’t validate total number of licenses with number of assigned licenses to users;
+### What can be improved?
+* plugin does not validate total number of licenses with number of assigned licenses to users;

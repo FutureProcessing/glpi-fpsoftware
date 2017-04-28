@@ -8,11 +8,11 @@
          <en><![CDATA[GLPI plugin that allows to assign software to users.]]></en>
       </short>
       <long>
-         <en><![CDATA[By default GLPI doesn’t allow to assign software to a user. As we all know a lot of software is currently licensed in per user model. FP Software plugin allows you to assign software to a user and view all his/hers licenses.<br/>It changes how software/license asset looks like by providing new tab to license where you can assign users to software and another tab to software so you can see all users using the software (no matter which licenses they are using).<br/>In general this plugin makes GLPI more user-oriented instead of PC-oriented.<br/><br/>Changelog:<br/>2015.12:<br/>- Licenses - Users tab now shows proper per user license usage and groups PCs owned by a user;<br/>- "Affected Computers" can show how many licenses are assigned to both users and computers (please read manual on our GitHub)<br/>- plugin is now compatibile with GLPI 0.90<br/><br/><a href="http://www.future-processing.com">Company website</a>]]></en>
+         <en><![CDATA[By default GLPI does not allow to assign software to a user. As we all know a lot of software is currently licensed in per user model. FP Software plugin allows you to assign software to a user and view all his/hers licenses.<br/>It changes how software/license asset looks like by providing new tab to license where you can assign users to software and another tab to software so you can see all users using the software (no matter which licenses they are using).<br/>In general this plugin makes GLPI more user-oriented instead of PC-oriented.<br/><br/>Changelog:<br/><br/>2015.12:<br/><br/>- Licenses - Users tab now shows proper per user license usage and groups PCs owned by a user;<br/>- "Affected Computers" can show how many licenses are assigned to both users and computers (please read manual on our GitHub)<br/>- plugin is now compatible with GLPI 0.90<br/><br/>2017.04:<br/><br/>- plugin is now compatible with GLPI 9.1.2<br/><br/><a href="http://www.future-processing.com">Company website</a>]]></en>
       </long>
    </description>
    <homepage>https://github.com/FutureProcessing/glpi-fpsoftware</homepage>
-   <download>https://github.com/FutureProcessing/glpi-fpsoftware/archive/master.zip</download>
+   <download>https://github.com/FutureProcessing/glpi-fpsoftware/archive/v1.1.zip</download>
    <issues>https://github.com/FutureProcessing/glpi-fpsoftware/issues</issues>
    <readme>https://github.com/FutureProcessing/glpi-fpsoftware/blob/master/README.md</readme>
    <authors>
@@ -20,22 +20,28 @@
    </authors>
    <versions>
       <version>
-          <num>1.0</num>
-          <compatibility>0.90</compatibility>
-		  <compatibility>0.85</compatibility>
-	   </version>
+         <num>1.1</num>
+         <compatibility>9.1.2</compatibility>
+         <compatibility>9.1.1</compatibility>
+         <compatibility>9.1</compatibility>
+      </version>
+      <version>
+         <num>1.0</num>
+         <compatibility>0.90</compatibility>
+         <compatibility>0.85</compatibility>
+      </version>
    </versions>
    <langs>
       <lang>en_GB</lang>
    </langs>
    <license><![CDATA[GPL v2+]]></license>
    <tags>
-         <en>
-            <tag>Inventory</tag>
-         </en>
-		 <lang>
-            <tag>Inventory</tag>
-		 </lang>
+      <en>
+         <tag>Inventory</tag>
+      </en>
+      <lang>
+         <tag>Inventory</tag>
+      </lang>
    </tags>
    <screenshots>
       <screenshot>https://cloud.githubusercontent.com/assets/3634020/8588884/ca0d363a-260f-11e5-9a7c-8be8b4600eb2.png</screenshot>
