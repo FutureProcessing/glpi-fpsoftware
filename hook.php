@@ -47,7 +47,7 @@
 function plugin_fpsoftware_install() {
     global $DB;
 
-    if ( ! TableExists("glpi_users_softwarelicenses")) {
+    if ( ! $DB->tableExists("glpi_users_softwarelicenses")) {
         $query = "CREATE TABLE IF NOT EXISTS `glpi_users_softwarelicenses` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `users_id` int(11) NOT NULL,
@@ -70,7 +70,7 @@ function plugin_fpsoftware_install() {
 function plugin_fpsoftware_uninstall() {
     global $DB;
 
-    if (TableExists("glpi_users_softwarelicenses")) {
+    if ($DB->tableExists("glpi_users_softwarelicenses")) {
          $query = "DROP TABLE glpi_users_softwarelicenses;";
 
          $DB->queryOrDie($query, "drop glpi_users_softwarelicenses table");

@@ -24,7 +24,7 @@ Global view of all licenses lists all users along with their machines, in that c
 In general this plugin makes GLPI more user-oriented instead of PC-oriented.
 
 ### Requirements
-GLPI 0.85.x, 0.90.x, 9.1.x
+GLPI 0.85.x, 0.90.x, 9.1.x - 9.3.x
 
 ### Install instructions
 Just like all other plugins, just copy to plugins and install/enable from Administration/Plugins section.
