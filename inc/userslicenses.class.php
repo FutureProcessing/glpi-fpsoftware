@@ -111,7 +111,7 @@ class PluginFpsoftwareUsersLicenses extends CommonDBRelation {
 
         $softwareId = $software->getField("id");
         $result = $DB->query(self::getCountQuery($softwareId));
-        $row = $DB->fetch_assoc($result);
+        $row = $DB->fetchassoc($result);
 
         return $row ? $row['rows_number'] : 0;
     }
@@ -177,7 +177,7 @@ class PluginFpsoftwareUsersLicenses extends CommonDBRelation {
         echo self::printGridColumnsHeaders($sortingOrder, $sortingColumn);
 
         if ($totalRecordsCount > 0) {
-            while ($data = $DB->fetch_assoc($queryResult)) {
+            while ($data = $DB->fetchassoc($queryResult)) {
                 echo "<tr class='tab_bg_1'>";
                 echo "<td class='left'><a href='softwarelicense.form.php?id=".$data['license_id']."'>".$data["license_name"]."</a> - ".$data["license_serial"]." (".$data["license_type"].") "."</td>";
                 echo "<td class='left'><a href='user.form.php?id=".$data['user_id']."'>".$data["user_name"]."</a></td>";

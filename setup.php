@@ -45,7 +45,7 @@ function plugin_version_fpsoftware()
 {
     return array(
         'name' => "FP Software",
-        'version' => '1.4.0',
+        'version' => '1.5.0',
         'author' => 'Future Processing',
         'license' => 'GPLv2+',
         'homepage' => 'http://www.future-processing.com',
@@ -64,8 +64,8 @@ function plugin_version_fpsoftware()
  */
 function plugin_fpsoftware_check_prerequisites()
 {
-    if (version_compare(GLPI_VERSION, '0.84', 'lt') || version_compare(GLPI_VERSION, '9.5', 'gt')) {
-        echo "This plugin requires GLPI >= 0.84 and GLPI <= 9.5";
+    if (version_compare(GLPI_VERSION, '0.84', 'lt') || version_compare(GLPI_VERSION, '9.6', 'gt')) {
+        echo "This plugin requires GLPI >= 0.84 and GLPI <= 9.6";
 
         return false;
     }
