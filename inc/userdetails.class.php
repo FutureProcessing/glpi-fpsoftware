@@ -34,50 +34,62 @@ class PluginFpsoftwareUserdetails extends CommonDBRelation {
     * Show table wiht linked licenses to user
     * @param User $user
     */
-   static function showLicenses(User $user) {
-        global $DB;
+   static function showLicenses(User $user)
+   {
+      global $DB;
 
-		$ID = $user->getField('id');
+      $rand = mt_rand();
+      Html::openMassiveActionsForm('mass' . __CLASS__ . $rand);
+      list($higher_version, $massive_action_params) = PluginFpsoftwareVersionhelper::massiveActionParams(
+         $rand, __CLASS__);
+      Html::showMassiveActions($higher_version ? $massive_action_params : __CLASS__, $massive_action_params);
+      $id = $user->getField('id');
+      echo "<div class='spaced'><table class='tab_cadre_fixehov'>";
+      $header = "<tr>";
+      $header .= "<th>" . "</th>";
+      $header .= "<th>" . __('Software') . "</th>";
+      $header .= "<th>" . __('Licenses') . "</th>";
+      $header .= "<th>" . __('Added') . "</th></tr>";
+      echo $header;
 
-		echo "<div class='spaced'><table class='tab_cadre_fixehov'>";
-		$header = "<tr><th>".__('Software')."</th>";
-		$header .= "<th>".__('Licenses')."</th>";
-		$header .= "<th>".__('Added')."</th></tr>";
-		echo $header;
-
-        $query = "SELECT
+      $query = "SELECT
                 ul.added,
                 sl.name AS licenses_name,
                 s.name AS software_name,
-				sl.id AS licenses_id,
-				s.id AS software_id
+                sl.id AS licenses_id,
+                s.id AS software_id,
+                ul.id AS softwarelicenses_id
             FROM
                 glpi_users_softwarelicenses ul
                 JOIN glpi_softwarelicenses sl ON (sl.id = ul.softwarelicenses_id)
                 JOIN glpi_softwares s ON (s.id = sl.softwares_id)
             WHERE
-                ul.users_id = '$ID'
+                ul.users_id = '$id'
             ORDER BY
                 ul.added DESC";
 
-        $result = $DB->query($query);
+      $result = $DB->query($query);
+      if ($DB->numrows($result) > 0) {
+         while ($data = $DB->fetchAssoc($result)) {
+            echo "<tr class='tab_bg_1'>";
+            echo "<td>" . Html::getMassiveActionCheckBox(__CLASS__, $data["softwarelicenses_id"]) . "</td>";
+            echo "<td ><a href='software.form.php?id=" . $data['software_id'] . "'>" . $data["software_name"] . "</a></td>";
+            echo "<td ><a href='softwarelicense.form.php?id=" . $data['licenses_id'] . "'>" . $data["licenses_name"] . "</a></td>";
+            echo "<td style='width:20%'>" . $data["added"] . "</td>";
+            echo "</tr>";
+         }
+      } else {
+         echo "<tr class='tab_bg_1'><td class='center' colspan='4'>No results.</td></tr>";
+      }
 
-        if ($DB->numrows($result) > 0) {
-            while ($data = $DB->fetch_assoc($result)) {
-                echo "<tr class='tab_bg_1'>";
-                echo "<td class='center'><a href='software.form.php?id=".$data['software_id']."'>".$data["software_name"]."</a></td>";
-                echo "<td class='center'><a href='softwarelicense.form.php?id=".$data['licenses_id']."'>".$data["licenses_name"]."</a></td>";
-                echo "<td class='center' style='width:20%'>".$data["added"]."</td>";
-                echo "</tr>";
-            }
-        }  else {
-            echo "<tr class='tab_bg_1'><td class='center' colspan='3'>No results.</td></tr>";
-        }
+      echo "</table>";
+      $massive_action_params['ontop'] = false;
+      Html::showMassiveActions($massive_action_params);
+      Html::closeForm();
+      echo "</div>\n";
 
-		echo "</table></div>";
-
-		return true;
-    }
+      return true;
+   }
 
     /**
      * @see CommonGLPI::getTabNameForItem()
@@ -111,6 +123,17 @@ class PluginFpsoftwareUserdetails extends CommonDBRelation {
       }
 
       return true;
+   }
+
+   static function processMassiveActionsForOneItemtype(MassiveAction $ma, CommonDBTM $item, array $ids)
+   {
+      if ($ma->getAction() === 'deleteSelected' && isset($_POST['items']['PluginFpsoftwareUserdetails']) && is_array(
+            $_POST['items']['PluginFpsoftwareUserdetails'])) {
+         foreach (array_keys($_POST['items']['PluginFpsoftwareUserdetails']) as $id) {
+            PluginFpsoftwareCommon::deleteItem($id);
+            $ma->itemDone($item->getType(), $id, MassiveAction::ACTION_OK);
+         }
+      }
    }
 
 }

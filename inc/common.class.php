@@ -253,7 +253,7 @@ class PluginFpsoftwareCommon extends CommonDBRelation {
       $rand = mt_rand();
 
       if ($result = $DB->query($query)) {
-         if ($data = $DB->fetch_assoc($result)) {
+         if ($data = $DB->fetchAssoc($result)) {
 
             if ($canedit) {
                $rand = mt_rand();
@@ -320,7 +320,7 @@ class PluginFpsoftwareCommon extends CommonDBRelation {
                echo "<td style=\"text-align:center;\">".$data['added']."</td>";
                echo "</tr>\n";
 
-            } while ($data=$DB->fetch_assoc($result));
+            } while ($data=$DB->fetchAssoc($result));
             echo $header_begin.$header_bottom.$header_end;
             echo "</table>\n";
             if ($canedit) {
