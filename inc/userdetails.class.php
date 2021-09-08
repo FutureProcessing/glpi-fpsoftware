@@ -56,8 +56,8 @@ class PluginFpsoftwareUserdetails extends CommonDBRelation {
                 ul.added,
                 sl.name AS licenses_name,
                 s.name AS software_name,
-				    sl.id AS licenses_id,
-				    s.id AS software_id,
+                sl.id AS licenses_id,
+                s.id AS software_id,
                 ul.id AS softwarelicenses_id
             FROM
                 glpi_users_softwarelicenses ul
@@ -70,7 +70,7 @@ class PluginFpsoftwareUserdetails extends CommonDBRelation {
 
       $result = $DB->query($query);
       if ($DB->numrows($result) > 0) {
-         while ($data = $DB->fetchassoc($result)) {
+         while ($data = $DB->fetchAssoc($result)) {
             echo "<tr class='tab_bg_1'>";
             echo "<td>" . Html::getMassiveActionCheckBox(__CLASS__, $data["softwarelicenses_id"]) . "</td>";
             echo "<td ><a href='software.form.php?id=" . $data['software_id'] . "'>" . $data["software_name"] . "</a></td>";
@@ -127,16 +127,12 @@ class PluginFpsoftwareUserdetails extends CommonDBRelation {
 
    static function processMassiveActionsForOneItemtype(MassiveAction $ma, CommonDBTM $item, array $ids)
    {
-      switch ($ma->getAction()) {
-         case 'deleteSelected':
-            if (isset($_POST['items']['PluginFpsoftwareUserdetails']) && is_array(
-                  $_POST['items']['PluginFpsoftwareUserdetails'])) {
-               foreach (array_keys($_POST['items']['PluginFpsoftwareUserdetails']) as $id) {
-                  PluginFpsoftwareCommon::deleteItem($id);
-                  $ma->itemDone($item->getType(), $id, MassiveAction::ACTION_OK);
-               }
-            }
-            break;
+      if ($ma->getAction() === 'deleteSelected' && isset($_POST['items']['PluginFpsoftwareUserdetails']) && is_array(
+            $_POST['items']['PluginFpsoftwareUserdetails'])) {
+         foreach (array_keys($_POST['items']['PluginFpsoftwareUserdetails']) as $id) {
+            PluginFpsoftwareCommon::deleteItem($id);
+            $ma->itemDone($item->getType(), $id, MassiveAction::ACTION_OK);
+         }
       }
    }
 
