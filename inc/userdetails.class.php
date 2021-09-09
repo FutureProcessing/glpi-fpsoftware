@@ -31,27 +31,17 @@ class PluginFpsoftwareUserdetails extends CommonDBRelation {
    }
 
    /**
-    * Show table wiht linked licenses to user
+    * Displays a table with the licenses linked with the user.
+    *
     * @param User $user
+    *
+    * @return bool
     */
-   static function showLicenses(User $user)
+   static function showLicenses(User $user): bool
    {
       global $DB;
 
-      $rand = mt_rand();
-      Html::openMassiveActionsForm('mass' . __CLASS__ . $rand);
-      list($higher_version, $massive_action_params) = PluginFpsoftwareVersionhelper::massiveActionParams(
-         $rand, __CLASS__);
-      Html::showMassiveActions($higher_version ? $massive_action_params : __CLASS__, $massive_action_params);
       $id = $user->getField('id');
-      echo "<div class='spaced'><table class='tab_cadre_fixehov'>";
-      $header = "<tr>";
-      $header .= "<th>" . "</th>";
-      $header .= "<th>" . __('Software') . "</th>";
-      $header .= "<th>" . __('Licenses') . "</th>";
-      $header .= "<th>" . __('Added') . "</th></tr>";
-      echo $header;
-
       $query = "SELECT
                 ul.added,
                 sl.name AS licenses_name,
@@ -69,24 +59,41 @@ class PluginFpsoftwareUserdetails extends CommonDBRelation {
                 ul.added DESC";
 
       $result = $DB->query($query);
-      if ($DB->numrows($result) > 0) {
-         while ($data = $DB->fetchAssoc($result)) {
-            echo "<tr class='tab_bg_1'>";
-            echo "<td>" . Html::getMassiveActionCheckBox(__CLASS__, $data["softwarelicenses_id"]) . "</td>";
-            echo "<td ><a href='software.form.php?id=" . $data['software_id'] . "'>" . $data["software_name"] . "</a></td>";
-            echo "<td ><a href='softwarelicense.form.php?id=" . $data['licenses_id'] . "'>" . $data["licenses_name"] . "</a></td>";
-            echo "<td style='width:20%'>" . $data["added"] . "</td>";
-            echo "</tr>";
-         }
-      } else {
-         echo "<tr class='tab_bg_1'><td class='center' colspan='4'>No results.</td></tr>";
+      if ($DB->numrows($result) <= 0) {
+         echo '<div><table class="tab_cadre_fixe"><tr><th>' . __('No items found.') . '</th></tr></table></div>';
+
+         return true;
       }
 
-      echo "</table>";
+      $rand = mt_rand();
+      Html::openMassiveActionsForm('mass' . __CLASS__ . $rand);
+      list($higher_version, $massive_action_params) = PluginFpsoftwareVersionhelper::massiveActionParams(
+         $rand, __CLASS__);
+      Html::showMassiveActions($higher_version ? $massive_action_params : __CLASS__);
+      echo '<div class="spaced"><table class="tab_cadre_fixehov">';
+      $header = '<tr>';
+      $header .= '<th style="width:10%">' . Html::getCheckAllAsCheckbox('mass' . __CLASS__ . $rand) . '</th>';
+      $header .= '<th>' . __('Software') . '</th>';
+      $header .= '<th>' . __('Licenses') . '</th>';
+      $header .= '<th>' . __('Added') . '</th></tr>';
+      echo $header;
+
+      while ($data = $DB->fetchAssoc($result)) {
+         echo '<tr class="tab_bg_1">';
+         echo '<td>' . Html::getMassiveActionCheckBox(__CLASS__, $data['softwarelicenses_id']) . '</td>';
+         $software_link = '"software.form.php?id=' . $data['software_id'] . '"';
+         $license_link = '"softwarelicense.form.php?id=' . $data['licenses_id'] . '"';
+         echo '<td><a href=' . $software_link . '>' . $data['software_name'] . '</a></td>';
+         echo '<td><a href=' . $license_link . '>' . $data['licenses_name'] . '</a></td>';
+         echo '<td style="width:20%">' . $data['added'] . '</td>';
+         echo '</tr>';
+      }
+
+      echo '</table>';
       $massive_action_params['ontop'] = false;
       Html::showMassiveActions($massive_action_params);
       Html::closeForm();
-      echo "</div>\n";
+      echo '</div>' . PHP_EOL;
 
       return true;
    }
