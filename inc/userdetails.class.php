@@ -81,10 +81,10 @@ class PluginFpsoftwareUserdetails extends CommonDBRelation {
       while ($data = $DB->fetchAssoc($result)) {
          echo '<tr class="tab_bg_1">';
          echo '<td>' . Html::getMassiveActionCheckBox(__CLASS__, $data['softwarelicenses_id']) . '</td>';
-         $softwareLink = '"software.form.php?id=' . $data['software_id'] . '"';
-         $licenseLink = '"softwarelicense.form.php?id=' . $data['licenses_id'] . '"';
-         echo '<td><a href=' . $softwareLink . '</a>' . $data['software_name'] . '</td>';
-         echo '<td><a href=' . $licenseLink . '</a>' . $data['licenses_name'] . '</td>';
+         $software_link = '"software.form.php?id=' . $data['software_id'] . '"';
+         $license_link = '"softwarelicense.form.php?id=' . $data['licenses_id'] . '"';
+         echo '<td><a href=' . $software_link . '>' . $data['software_name'] . '</a></td>';
+         echo '<td><a href=' . $license_link . '>' . $data['licenses_name'] . '</a></td>';
          echo '<td style="width:20%">' . $data['added'] . '</td>';
          echo '</tr>';
       }
