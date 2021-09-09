@@ -60,7 +60,7 @@ class PluginFpsoftwareUserdetails extends CommonDBRelation {
 
       $result = $DB->query($query);
       if ($DB->numrows($result) <= 0) {
-         echo "<div><table class='tab_cadre_fixe'><tr><th>" . __('No items found.') . "</th></tr></table></div>";
+         echo '<div><table class="tab_cadre_fixe"><tr><th>' . __('No items found.') . '</th></tr></table></div>';
 
          return true;
       }
@@ -69,29 +69,31 @@ class PluginFpsoftwareUserdetails extends CommonDBRelation {
       Html::openMassiveActionsForm('mass' . __CLASS__ . $rand);
       list($higher_version, $massive_action_params) = PluginFpsoftwareVersionhelper::massiveActionParams(
          $rand, __CLASS__);
-      Html::showMassiveActions($higher_version ? $massive_action_params : __CLASS__, $massive_action_params);
-      echo "<div class='spaced'><table class='tab_cadre_fixehov'>";
-      $header = "<tr>";
-      $header .= "<th width='10'>" . Html::getCheckAllAsCheckbox('mass' . __CLASS__ . $rand) . "</th>";
-      $header .= "<th>" . __('Software') . "</th>";
-      $header .= "<th>" . __('Licenses') . "</th>";
-      $header .= "<th>" . __('Added') . "</th></tr>";
+      Html::showMassiveActions($higher_version ? $massive_action_params : __CLASS__);
+      echo '<div class="spaced"><table class="tab_cadre_fixehov">';
+      $header = '<tr>';
+      $header .= '<th style="width:10%">' . Html::getCheckAllAsCheckbox('mass' . __CLASS__ . $rand) . '</th>';
+      $header .= '<th>' . __('Software') . '</th>';
+      $header .= '<th>' . __('Licenses') . '</th>';
+      $header .= '<th>' . __('Added') . '</th></tr>';
       echo $header;
 
       while ($data = $DB->fetchAssoc($result)) {
-         echo "<tr class='tab_bg_1'>";
-         echo "<td>" . Html::getMassiveActionCheckBox(__CLASS__, $data["softwarelicenses_id"]) . "</td>";
-         echo "<td ><a href='software.form.php?id=" . $data['software_id'] . "'>" . $data["software_name"] . "</a></td>";
-         echo "<td ><a href='softwarelicense.form.php?id=" . $data['licenses_id'] . "'>" . $data["licenses_name"] . "</a></td>";
-         echo "<td style='width:20%'>" . $data["added"] . "</td>";
-         echo "</tr>";
+         echo '<tr class="tab_bg_1">';
+         echo '<td>' . Html::getMassiveActionCheckBox(__CLASS__, $data['softwarelicenses_id']) . '</td>';
+         $softwareLink = '"software.form.php?id=' . $data['software_id'] . '"';
+         $licenseLink = '"softwarelicense.form.php?id=' . $data['licenses_id'] . '"';
+         echo '<td><a href=' . $softwareLink . '</a>' . $data['software_name'] . '</td>';
+         echo '<td><a href=' . $licenseLink . '</a>' . $data['licenses_name'] . '</td>';
+         echo '<td style="width:20%">' . $data['added'] . '</td>';
+         echo '</tr>';
       }
 
-      echo "</table>";
+      echo '</table>';
       $massive_action_params['ontop'] = false;
       Html::showMassiveActions($massive_action_params);
       Html::closeForm();
-      echo "</div>\n";
+      echo '</div>' . PHP_EOL;
 
       return true;
    }
