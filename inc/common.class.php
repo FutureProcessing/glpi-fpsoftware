@@ -6,7 +6,7 @@ if (!defined('GLPI_ROOT')) {
 
 class PluginFpsoftwareCommon extends CommonDBRelation {
 
-   static private $front_url = '/plugins/fpsoftware';
+   static public $front_url = '/plugins/fpsoftware';
 
    // From CommonDBRelation
    static public $itemtype_1 = 'User';
