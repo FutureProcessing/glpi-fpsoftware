@@ -234,4 +234,56 @@ class PluginFpsoftwareUsersLicenses extends CommonDBRelation {
 
         return true;
     }
+
+   /**
+    * Returns the ids of user's licenses.
+    *
+    * @param int $user_id
+    *
+    * @return array
+    */
+   public static function getUserLicenses(int $user_id): array
+   {
+      global $DB;
+
+      $result = $DB->request(
+         ['FROM' => 'glpi_users_softwarelicenses', 'WHERE' => ['users_id' => $user_id]]
+      );
+
+      $user_licenses = [];
+      while ($data = $result->next()) {
+         $user_licenses[] = $data['softwarelicenses_id'];
+      }
+
+      return $user_licenses;
+   }
+
+   /**
+    * Returns the ids of licenses unassigned to user.
+    *
+    * @param int $user_id
+    *
+    * @return array
+    */
+   public static function getLicensesUnassignedToUser(int $user_id): array
+   {
+      global $DB;
+
+      $user_licenses = self::getUserLicenses($user_id);
+      if (empty($user_licenses)) {
+         $result = $DB->request('glpi_softwarelicenses');
+      } else {
+         $result = $DB->request(
+            'glpi_softwarelicenses',
+            ['NOT' => ['id' => $user_licenses]]
+         );
+      }
+
+      $licenses = [];
+      while ($data = $result->next()) {
+         $licenses[] = $data['id'];
+      }
+
+      return $licenses;
+   }
 }

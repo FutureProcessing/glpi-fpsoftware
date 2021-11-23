@@ -40,8 +40,37 @@ class PluginFpsoftwareUserdetails extends CommonDBRelation {
    static function showLicenses(User $user): bool
    {
       global $DB;
+      global $CFG_GLPI;
 
       $id = $user->getField('id');
+      $licenses = PluginFpsoftwareUsersLicenses::getLicensesUnassignedToUser($id);
+
+      echo "<form method='post' action='" .
+           $CFG_GLPI["root_doc"] . PluginFpsoftwareCommon::getFrontUrl() .
+           "/front/user_softwarelicense.form.php'>";
+      echo "<input type='hidden' name='users_id' value='$id'>";
+      echo "<table class='tab_cadre_fixe'>";
+      echo "<tr class='tab_bg_2 center'>";
+      echo "<td>";
+
+      Dropdown::show(
+         'SoftwareLicense',
+         [
+            'width' => '80%',
+            'addicon' => false,
+            'condition' => ['id' => $licenses]
+         ]
+      );
+
+      echo "</td>";
+      echo "<td><input type='submit' name='add' value=\"" . _sx(
+            'button',
+            __('Add')
+         ) . "\" class='submit'>";
+      echo "</td></tr>";
+      echo "</table>";
+      Html::closeForm();
+
       $query = "SELECT
                 ul.added,
                 sl.name AS licenses_name,
