@@ -375,7 +375,7 @@ class PluginFpsoftwareCommon extends CommonDBRelation {
       return true;
    }
 
-   static public function getFrontUrl(): string
+   public static function getFrontUrl(): string
    {
       return self::$front_url;
    }
