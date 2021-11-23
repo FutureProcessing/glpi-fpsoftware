@@ -269,12 +269,13 @@ class PluginFpsoftwareUsersLicenses extends CommonDBRelation {
    {
       global $DB;
 
-      if (empty($user_linceses = self::getUserLicenses($user_id))) {
+      $user_licenses = self::getUserLicenses($user_id);
+      if (empty($user_licenses)) {
          $result = $DB->request('glpi_softwarelicenses');
       } else {
          $result = $DB->request(
             'glpi_softwarelicenses',
-            ['NOT' => ['id' => $user_linceses]]
+            ['NOT' => ['id' => $user_licenses]]
          );
       }
 

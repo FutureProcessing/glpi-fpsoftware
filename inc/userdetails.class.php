@@ -46,7 +46,7 @@ class PluginFpsoftwareUserdetails extends CommonDBRelation {
       $licenses = PluginFpsoftwareUsersLicenses::getLicensesUnassignedToUser($id);
 
       echo "<form method='post' action='" .
-           $CFG_GLPI["root_doc"] . PluginFpsoftwareCommon::$front_url .
+           $CFG_GLPI["root_doc"] . PluginFpsoftwareCommon::getFrontUrl() .
            "/front/user_softwarelicense.form.php'>";
       echo "<input type='hidden' name='users_id' value='$id'>";
       echo "<table class='tab_cadre_fixe'>";
