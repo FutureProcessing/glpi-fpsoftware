@@ -1,5 +1,8 @@
 <?php
 
+const DATATABLES_JS_PATH = '/vendor/datatables/datatables/media/js/jquery.dataTables.js';
+const DATATABLES_CSS_PATH = '/vendor/datatables/datatables/media/css/jquery.dataTables.css';
+
 if (!defined('GLPI_ROOT')) {
    die("Sorry. You can't access directly to this file");
 }
@@ -158,82 +161,21 @@ class PluginFpsoftwareCommon extends CommonDBRelation {
    }
 
    /**
-    * Show users linked to a License
+    * Returns form with users assigned to license.
     *
-    * @param $license SoftwareLicense object
+    * @param SoftwareLicense $license
+    * @param int $license_id
+    * @param bool $can_edit
     *
-    * @return nothing
-   **/
-   static function showForLicense(SoftwareLicense $license) {
-      global $DB, $CFG_GLPI;
+    * @throws GlpitestSQLError
+    */
+   private static function usersAssignedToLicenseForm(
+      SoftwareLicense $license,
+      bool $can_edit
+   ): void {
+      global $DB;
 
-      $searchID = $license->getField('id');
-
-      if (!Software::canView() || !$searchID) {
-         return false;
-      }
-
-      $canedit = PluginFpsoftwareVersionhelper::checkRights("software", array(CREATE, UPDATE, DELETE, PURGE), "Or");
-      $canshowuser = User::canView();
-
-
-      if (isset($_GET["start"])) {
-         $start = $_GET["start"];
-      } else {
-         $start = 0;
-      }
-
-      if (isset($_GET["order"]) && ($_GET["order"] == "DESC")) {
-         $order = "DESC";
-      } else {
-         $order = "ASC";
-      }
-
-      //SoftwareLicense ID
-      $query_number = "SELECT COUNT(*) AS cpt
-                       FROM `glpi_users_softwarelicenses`
-                       INNER JOIN `glpi_users`
-                           ON (`glpi_users_softwarelicenses`.`users_id`
-                                 = `glpi_users`.`id`)
-                       WHERE `glpi_users_softwarelicenses`.`softwarelicenses_id` = '$searchID'";
-
-      $number = 0;
-      if ($result = $DB->query($query_number)) {
-         $number = $DB->result($result, 0, 0);
-      }
-
-      echo "<div class='center'>";
-
-      if ($canedit) {
-         echo "<form method='post' action='".
-                $CFG_GLPI["root_doc"].self::$front_url."/front/user_softwarelicense.form.php'>";
-         echo "<input type='hidden' name='softwarelicenses_id' value='$searchID'>";
-
-         echo "<table class='tab_cadre_fixe'>";
-         echo "<tr class='tab_bg_2 center'>";
-         echo "<td>";
-		 //FOR NOW ALL USERS ARE SHOWN, DON'T KNOW IF THERE SHOULD BE ANY RESTRICTION.
-		 //ALSO IT CAUSES A POSSIBILITY TO ONE USER MANY TIMES.
-         User::dropdown(array('right' => 'all'));
-
-         echo "</td>";
-         echo "<td><input type='submit' name='add' value=\""._sx('button', 'Add')."\" class='submit'>";
-         echo "</td></tr>";
-
-         echo "</table>";
-         Html::closeForm();
-      }
-
-      if ($number < 1) {
-         echo "<table class='tab_cadre_fixe'>";
-         echo "<tr><th>".__('No item found')."</th></tr>";
-         echo "</table></div>\n";
-         return;
-      }
-
-      // Display the pager
-      Html::printAjaxPager(__('Affected users'), $start, $number);
-
+      $license_id = $license->getField('id');
       $query = "SELECT `glpi_users_softwarelicenses`.*,
                        `glpi_users`.`name` AS username,
                        `glpi_users`.`id` AS userid,
@@ -247,96 +189,192 @@ class PluginFpsoftwareCommon extends CommonDBRelation {
                           = `glpi_softwarelicenses`.`id`)
                 INNER JOIN `glpi_users`
                      ON (`glpi_users_softwarelicenses`.`users_id` = `glpi_users`.`id`)
-                WHERE `glpi_softwarelicenses`.`id` = '$searchID'
-                LIMIT ".intval($start)."," . intval($_SESSION['glpilist_limit']);
+                WHERE `glpi_softwarelicenses`.`id` = '$license_id'";
 
       $rand = mt_rand();
-
       if ($result = $DB->query($query)) {
          if ($data = $DB->fetchAssoc($result)) {
+            if ($can_edit) {
+               Html::openMassiveActionsForm('mass' . __CLASS__ . $rand);
+               [$higher_version, $massive_action_params] =
+                  PluginFpsoftwareVersionhelper::massiveActionParams($rand, __CLASS__);
 
-            if ($canedit) {
-               $rand = mt_rand();
-               Html::openMassiveActionsForm('mass'.__CLASS__.$rand);
-			   list($higher_version, $massiveactionparams) = PluginFpsoftwareVersionhelper::massiveActionParams($rand, __CLASS__);
-
-               // Options to update license
-               $massiveactionparams['extraparams']['options']['move']['used'] = array($searchID);
-               $massiveactionparams['extraparams']['options']['move']['softwares_id']
-                                                                   = $license->fields['softwares_id'];
-
-               Html::showMassiveActions($higher_version ? $massiveactionparams : __CLASS__, $massiveactionparams);
+               $massive_action_params['extraparams']['options']['move']['used'] = [$license_id];
+               $massive_action_params['extraparams']['options']['move']['softwares_id']
+                  = $license->fields['softwares_id'];
+               Html::showMassiveActions($higher_version ? $massive_action_params : __CLASS__);
             }
 
-            $soft       = new Software();
-            $soft->getFromDB($license->fields['softwares_id']);
+            $software = new Software();
+            $software->getFromDB($license->fields['softwares_id']);
 
-            $text = sprintf(__('%1$s = %2$s'), Software::getTypeName(1), $soft->fields["name"]);
+            $text = sprintf(__('%1$s = %2$s'), Software::getTypeName(1), $software->fields["name"]);
             $text = sprintf(__('%1$s - ID %2$s'), $text, $license->fields['softwares_id']);
             Session::initNavigateListItems('User', $text);
 
             echo "<table class='tab_cadre_fixehov'>";
+            $columns = [
+               'username' => __('Username'),
+               'userrealname' => __('Surname'),
+               'userfirstname' => __('First name'),
+               'added' => __('Added')
+            ];
 
-            $columns = array('username'          => __('Username'),
-                             'userrealname'            => __('Surname'),
-                             'userfirstname'            => __('First name'),
-                            'added' => __('Added'));
-
-            $header_begin  = "<tr>";
-            $header_top    = '';
+            $header_begin = "<thead><tr>";
+            $header_top = '';
             $header_bottom = '';
-            $header_end    = '';
-            if ($canedit) {
-               $header_begin  .= "<th width='10'>";
-               $header_top    .= Html::getCheckAllAsCheckbox('mass'.__CLASS__.$rand);
-               $header_bottom .= Html::getCheckAllAsCheckbox('mass'.__CLASS__.$rand);
-               $header_end    .= "</th>";
+            $header_end = '';
+            if ($can_edit) {
+               $header_begin .= "<th class='select-all' width='10'>";
+               $header_top .= Html::getCheckAllAsCheckbox('mass' . __CLASS__ . $rand);
+               $header_bottom .= Html::getCheckAllAsCheckbox('mass' . __CLASS__ . $rand);
+               $header_end .= "</th>";
             }
 
             foreach ($columns as $key => $val) {
-               // Non order column
                $header_end .= "<th>$val</th>";
             }
 
-            $header_end .= "</tr>\n";
-            echo $header_begin.$header_top.$header_end;
+            $header_end .= "</tr></thead>\n";
+            echo $header_begin . $header_top . $header_end;
 
             do {
-               Session::addToNavigateListItems('User',$data["userid"]);
-
+               Session::addToNavigateListItems('User', $data["userid"]);
                echo "<tr class='tab_bg_2'>";
-               if ($canedit) {
-                  echo "<td>".Html::getMassiveActionCheckBox(__CLASS__, $data["id"])."</td>";
+               if ($can_edit) {
+                  echo "<td>" . Html::getMassiveActionCheckBox(__CLASS__, $data["id"]) . "</td>";
                }
 
-               if ($canshowuser) {
-                  echo "<td><a href='user.form.php?id=".$data['userid']."'>".$data['username']."</a></td>";
+               $can_show_user = User::canView();
+               if ($can_show_user) {
+                  echo "<td><a href='user.form.php?id=" . $data['userid'] . "'>" . $data['username'] . "</a></td>";
                } else {
-                  echo "<td>".$data['username']."</td>";
+                  echo "<td>" . $data['username'] . "</td>";
                }
 
-               echo "<td>".$data['userrealname']."</td>";
-               echo "<td>".$data['userfirstname']."</td>";
-               echo "<td style=\"text-align:center;\">".$data['added']."</td>";
+               echo "<td>" . $data['userrealname'] . "</td>";
+               echo "<td>" . $data['userfirstname'] . "</td>";
+               echo "<td>" . $data['added'] . "</td>";
                echo "</tr>\n";
+            } while ($data = $DB->fetchAssoc($result));
 
-            } while ($data=$DB->fetchAssoc($result));
-            echo $header_begin.$header_bottom.$header_end;
+            echo $header_begin . $header_bottom . $header_end;
             echo "</table>\n";
-            if ($canedit) {
-               $massiveactionparams['ontop'] = false;
-               Html::showMassiveActions($massiveactionparams);
+
+            if ($can_edit) {
+               $massive_action_params['ontop'] = false;
+               Html::showMassiveActions($massive_action_params);
                Html::closeForm();
             }
-
-         } else { // Not found
+         } else {
             _e('No item found');
          }
-      } // Query
-      Html::printAjaxPager(__('Affected users'), $start, $number);
+      }
 
       echo "</div>\n";
+   }
 
+   /**
+    * Returns number of users assigned to license.
+    *
+    * @param int $license_id
+    *
+    * @return int
+    * @throws GlpitestSQLError
+    */
+   private static function numberOfUsersAssignedToLicense(int $license_id): int
+   {
+      global $DB;
+
+      $query_number = "SELECT COUNT(*) AS cpt
+                       FROM `glpi_users_softwarelicenses`
+                       INNER JOIN `glpi_users`
+                           ON (`glpi_users_softwarelicenses`.`users_id`
+                                 = `glpi_users`.`id`)
+                       WHERE `glpi_users_softwarelicenses`.`softwarelicenses_id` = '$license_id'";
+
+      $number = 0;
+      if ($result = $DB->query($query_number)) {
+         $number = $DB->result($result, 0, 0);
+      }
+
+      return $number;
+   }
+
+   /**
+    * Displays form with available users.
+    *
+    * @param int $license_id
+    */
+   private static function addUserForm(int $license_id): void
+   {
+      global $CFG_GLPI;
+
+      echo "<form method='post' action='" .
+           $CFG_GLPI["root_doc"] . self::$front_url . "/front/user_softwarelicense.form.php'>";
+      echo "<input type='hidden' name='softwarelicenses_id' value='$license_id'>";
+
+      echo "<table class='tab_cadre_fixe'>";
+      echo "<tr class='tab_bg_2 center'>";
+      echo "<td>";
+      User::dropdown(['right' => 'all']);
+      echo "</td>";
+      echo "<td><input type='submit' name='add' value=\"" . _sx(
+            'button',
+            'Add'
+         ) . "\" class='submit'>";
+      echo "</td></tr>";
+
+      echo "</table>";
+      Html::closeForm();
+   }
+
+   private static function assignJsAndCssFilesToUsersTab()
+   {
+      echo Html::script(self::getFrontUrl() . DATATABLES_JS_PATH);
+      echo Html::css(self::getFrontUrl() . DATATABLES_CSS_PATH);
+      echo Html::script(self::getFrontUrl() . '/js/licenses.js');
+      echo Html::css(self::getFrontUrl() . '/css/licenses.css');
+   }
+
+   /**
+    * Displays content for Users tab on license page.
+    *
+    * @param $license SoftwareLicense object
+    *
+    * @return void
+    *
+    * @throws GlpitestSQLError
+    */
+   static function showForLicense(SoftwareLicense $license): void
+   {
+      $license_id = $license->getField('id');
+      if (!Software::canView() || !$license_id) {
+         return;
+      }
+
+      self::assignJsAndCssFilesToUsersTab();
+      echo "<div class='center'>";
+      $can_edit = PluginFpsoftwareVersionhelper::checkRights(
+         "software",
+         [CREATE, UPDATE, DELETE, PURGE],
+         "Or"
+      );
+
+      if ($can_edit) {
+         self::addUserForm($license_id);
+      }
+
+      $number = self::numberOfUsersAssignedToLicense($license_id);
+      if ($number < 1) {
+         echo "<table class='tab_cadre_fixe'>";
+         echo "<tr><th>" . __('No item found') . "</th></tr>";
+         echo "</table></div>\n";
+
+         return;
+      }
+
+      self::usersAssignedToLicenseForm($license, $can_edit);
    }
 
     /**

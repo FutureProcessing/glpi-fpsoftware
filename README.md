@@ -27,7 +27,10 @@ In general this plugin makes GLPI more user-oriented instead of PC-oriented.
 GLPI 0.85.x, 0.90.x, 9.1.x - 9.4.x
 
 ### Install instructions
-Just like all other plugins, just copy to plugins and install/enable from Administration/Plugins section.
+1. Copy plugin to plugins directory.
+2. Using console in fpsoftware plugin directory please run 'composer install'.
+3. Install/enable plugin from Administration/Plugins 
+section.
 
 Please be sure that name of the folder that contains plugin file is fpsoftware.
 

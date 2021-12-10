@@ -1,0 +1,5 @@
+{
+  "require": {
+    "datatables/datatables": "1.10.21"
+  }
+}
