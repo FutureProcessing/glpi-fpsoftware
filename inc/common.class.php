@@ -1,8 +1,5 @@
 <?php
 
-const DATATABLES_JS_PATH = '/vendor/datatables/datatables/media/js/jquery.dataTables.js';
-const DATATABLES_CSS_PATH = '/vendor/datatables/datatables/media/css/jquery.dataTables.css';
-
 if (!defined('GLPI_ROOT')) {
    die("Sorry. You can't access directly to this file");
 }
@@ -174,6 +171,11 @@ class PluginFpsoftwareCommon extends CommonDBRelation {
       bool $can_edit
    ): void {
       global $DB;
+      global $CFG_GLPI;
+
+      $start = isset($_GET['start']) ? $_GET['start'] : 0;
+      $order = isset($_GET['order']) && ($_GET['order'] === 'DESC') ? $_GET['order'] : 'ASC';
+      $sort = !empty($_GET['sort']) ? $_GET['sort'] : 'username';
 
       $license_id = $license->getField('id');
       $query = "SELECT `glpi_users_softwarelicenses`.*,
@@ -189,14 +191,22 @@ class PluginFpsoftwareCommon extends CommonDBRelation {
                           = `glpi_softwarelicenses`.`id`)
                 INNER JOIN `glpi_users`
                      ON (`glpi_users_softwarelicenses`.`users_id` = `glpi_users`.`id`)
-                WHERE `glpi_softwarelicenses`.`id` = '$license_id'";
+                WHERE `glpi_softwarelicenses`.`id` = '$license_id'
+                ORDER BY $sort $order                
+                LIMIT ".intval($start)."," . intval($_SESSION['glpilist_limit']);
 
       $rand = mt_rand();
       if ($result = $DB->query($query)) {
          if ($data = $DB->fetchAssoc($result)) {
+            $parameters = "sort=$sort&amp;order=$order";
+            $license_page_url = $CFG_GLPI['url_base'] . '/front/softwarelicense.form.php' . '?id=' .
+                          $license_id;
+            $number_of_items = self::numberOfUsersAssignedToLicense($license_id);
+            Html::printPager($start, $number_of_items, $license_page_url, $parameters);
+
             if ($can_edit) {
                Html::openMassiveActionsForm('mass' . __CLASS__ . $rand);
-               [$higher_version, $massive_action_params] =
+               list($higher_version, $massive_action_params) =
                   PluginFpsoftwareVersionhelper::massiveActionParams($rand, __CLASS__);
 
                $massive_action_params['extraparams']['options']['move']['used'] = [$license_id];
@@ -231,8 +241,15 @@ class PluginFpsoftwareCommon extends CommonDBRelation {
                $header_end .= "</th>";
             }
 
-            foreach ($columns as $key => $val) {
-               $header_end .= "<th>$val</th>";
+            foreach ($columns as $key => $value) {
+               $header_end .= "<th $value";
+
+               if ($sort === $key) {
+                  $header_end .= " class='order_$order' ";
+               }
+
+               $header_end .= "><a href='$license_page_url&sort=$key&amp;order=";
+               $header_end .= (($order === "ASC") ? "DESC" : "ASC") . "'>" . $value . "</a></th>";
             }
 
             $header_end .= "</tr></thead>\n";
@@ -329,14 +346,6 @@ class PluginFpsoftwareCommon extends CommonDBRelation {
       Html::closeForm();
    }
 
-   private static function assignJsAndCssFilesToUsersTab()
-   {
-      echo Html::script(self::getFrontUrl() . DATATABLES_JS_PATH);
-      echo Html::css(self::getFrontUrl() . DATATABLES_CSS_PATH);
-      echo Html::script(self::getFrontUrl() . '/js/licenses.js');
-      echo Html::css(self::getFrontUrl() . '/css/licenses.css');
-   }
-
    /**
     * Displays content for Users tab on license page.
     *
@@ -353,7 +362,6 @@ class PluginFpsoftwareCommon extends CommonDBRelation {
          return;
       }
 
-      self::assignJsAndCssFilesToUsersTab();
       echo "<div class='center'>";
       $can_edit = PluginFpsoftwareVersionhelper::checkRights(
          "software",
