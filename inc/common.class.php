@@ -158,10 +158,47 @@ class PluginFpsoftwareCommon extends CommonDBRelation {
    }
 
    /**
+    * Returns the list of users not assigned to a license.
+    *
+    * @param int $license_id
+    *
+    * @return array
+    */
+   private static function usersUnassignedToALicense(int $license_id): array
+   {
+      global $DB;
+
+      $result = $DB->request(
+         'glpi_users_softwarelicenses',
+         ['softwarelicenses_id' => $license_id]
+      );
+
+      $usersAssignedToALicense = [];
+      while ($data = $result->next()) {
+         $usersAssignedToALicense[] = $data['users_id'];
+      }
+
+      if (empty($usersAssignedToALicense)) {
+         $result = $DB->request('glpi_users');
+      } else {
+         $result = $DB->request(
+            'glpi_users',
+            ['NOT' => ['id' => $usersAssignedToALicense]]
+         );
+      }
+
+      $usersUnassignedToALicense = [];
+      while ($data = $result->next()) {
+         $usersUnassignedToALicense[] = $data['id'];
+      }
+
+      return $usersUnassignedToALicense;
+   }
+
+   /**
     * Returns form with users assigned to license.
     *
     * @param SoftwareLicense $license
-    * @param int $license_id
     * @param bool $can_edit
     *
     * @throws GlpitestSQLError
@@ -327,6 +364,8 @@ class PluginFpsoftwareCommon extends CommonDBRelation {
    {
       global $CFG_GLPI;
 
+      $users = self::usersUnassignedToALicense($license_id);
+
       echo "<form method='post' action='" .
            $CFG_GLPI["root_doc"] . self::$front_url . "/front/user_softwarelicense.form.php'>";
       echo "<input type='hidden' name='softwarelicenses_id' value='$license_id'>";
@@ -334,7 +373,14 @@ class PluginFpsoftwareCommon extends CommonDBRelation {
       echo "<table class='tab_cadre_fixe'>";
       echo "<tr class='tab_bg_2 center'>";
       echo "<td>";
-      User::dropdown(['right' => 'all']);
+      Dropdown::show(
+         'User',
+         [
+            'width' => '80%',
+            'addicon' => false,
+            'condition' => ['id' => $users]
+         ]
+      );
       echo "</td>";
       echo "<td><input type='submit' name='add' value=\"" . _sx(
             'button',
