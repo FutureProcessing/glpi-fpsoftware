@@ -173,26 +173,26 @@ class PluginFpsoftwareCommon extends CommonDBRelation {
          ['softwarelicenses_id' => $license_id]
       );
 
-      $usersAssignedToALicense = [];
+      $users_assigned_to_a_license = [];
       while ($data = $result->next()) {
-         $usersAssignedToALicense[] = $data['users_id'];
+         $users_assigned_to_a_license[] = $data['users_id'];
       }
 
-      if (empty($usersAssignedToALicense)) {
+      if (empty($users_assigned_to_a_license)) {
          $result = $DB->request('glpi_users');
       } else {
          $result = $DB->request(
             'glpi_users',
-            ['NOT' => ['id' => $usersAssignedToALicense]]
+            ['NOT' => ['id' => $users_assigned_to_a_license]]
          );
       }
 
-      $usersUnassignedToALicense = [];
+      $users_unassigned_to_a_license = [];
       while ($data = $result->next()) {
-         $usersUnassignedToALicense[] = $data['id'];
+         $users_unassigned_to_a_license[] = $data['id'];
       }
 
-      return $usersUnassignedToALicense;
+      return $users_unassigned_to_a_license;
    }
 
    /**
