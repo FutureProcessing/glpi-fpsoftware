@@ -102,7 +102,7 @@ class PluginFpsoftwareUserdetails extends CommonDBRelation {
          $header_end .= (($order === "ASC") ? "DESC" : "ASC") . '")' . "'>" . $value . "</a></th>";
       }
 
-      $header_end .= "</tr></thead>\n";
+      $header_end .= "</tr></thead>";
       echo $header_begin . $header_top . $header_end;
 
       while ($data = $DB->fetchAssoc($result)) {
@@ -120,7 +120,7 @@ class PluginFpsoftwareUserdetails extends CommonDBRelation {
       }
 
       echo $header_begin . $header_bottom . $header_end;
-      echo "</table>\n";
+      echo "</table>";
       $massive_action_params['ontop'] = false;
       Html::showMassiveActions($massive_action_params);
       Html::closeForm();
