@@ -140,6 +140,14 @@ class PluginFpsoftwareUserdetails extends CommonDBRelation {
 
       $licenses = PluginFpsoftwareUsersLicenses::getLicensesUnassignedToUser($user_id);
 
+      foreach ($licenses as $key => $license_id) {
+         $license_helper = new PluginFpsoftwareLicenseHelper($license_id);
+         if ($license_helper->unlimited_licenses === false &&
+             $license_helper->number_of_available_licenses <= 0) {
+            unset($licenses[$key]);
+         }
+      }
+
       echo "<form method='post' action='" .
            $CFG_GLPI["root_doc"] . PluginFpsoftwareCommon::getFrontUrl() .
            "/front/user_softwarelicense.form.php'>";

@@ -102,4 +102,5 @@ function plugin_init_fpsoftware()
     Plugin::registerClass('PluginFpsoftwareUsersLicenses', array('addtabon' => array('Software')));
     Plugin::registerClass('PluginFpsoftwareVersionhelper');
     Plugin::registerClass('PluginFpsoftwareConfig');
+    Plugin::registerClass('PluginFpsoftwareLicenseHelper');
 }

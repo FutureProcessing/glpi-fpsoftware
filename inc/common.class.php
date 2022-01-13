@@ -199,12 +199,14 @@ class PluginFpsoftwareCommon extends CommonDBRelation {
     * Returns form with users assigned to license.
     *
     * @param SoftwareLicense $license
+    * @param int $number_of_assigned_licenses
     * @param bool $can_edit
     *
     * @throws GlpitestSQLError
     */
    private static function usersAssignedToLicenseForm(
       SoftwareLicense $license,
+      int $number_of_assigned_licenses,
       bool $can_edit
    ): void {
       global $DB;
@@ -238,8 +240,7 @@ class PluginFpsoftwareCommon extends CommonDBRelation {
             $parameters = "sort=$sort&amp;order=$order";
             $license_page_url = $CFG_GLPI['url_base'] . '/front/softwarelicense.form.php' . '?id=' .
                           $license_id;
-            $number_of_items = self::numberOfUsersAssignedToLicense($license_id);
-            Html::printPager($start, $number_of_items, $license_page_url, $parameters);
+            Html::printPager($start, $number_of_assigned_licenses, $license_page_url, $parameters);
 
             if ($can_edit) {
                Html::openMassiveActionsForm('mass' . __CLASS__ . $rand);
@@ -415,12 +416,18 @@ class PluginFpsoftwareCommon extends CommonDBRelation {
          "Or"
       );
 
+      $license_helper = new PluginFpsoftwareLicenseHelper($license_id);
       if ($can_edit) {
-         self::addUserForm($license_id);
+         if ($license_helper->unlimited_licenses === false &&
+             $license_helper->number_of_available_licenses <= 0) {
+            self::displayInfoAboutLicensesLimit();
+         } else {
+            self::addUserForm($license_id);
+         }
       }
 
-      $number = self::numberOfUsersAssignedToLicense($license_id);
-      if ($number < 1) {
+      $number_of_assigned_licenses = $license_helper->getNumberOfAssignedLicenses();
+      if ($number_of_assigned_licenses < 1) {
          echo "<table class='tab_cadre_fixe'>";
          echo "<tr><th>" . __('No item found') . "</th></tr>";
          echo "</table></div>\n";
@@ -428,7 +435,7 @@ class PluginFpsoftwareCommon extends CommonDBRelation {
          return;
       }
 
-      self::usersAssignedToLicenseForm($license, $can_edit);
+      self::usersAssignedToLicenseForm($license, $number_of_assigned_licenses, $can_edit);
    }
 
     /**
@@ -470,5 +477,13 @@ class PluginFpsoftwareCommon extends CommonDBRelation {
    public static function getFrontUrl(): string
    {
       return self::$front_url;
+   }
+
+   private static function displayInfoAboutLicensesLimit(): void
+   {
+      echo "<div class='warning'><i class='fa fa-exclamation-triangle fa-1x'></i>" . __(
+            "You can't assign a license to next user. No licenses available.
+             If you want to increase the number of licenses, go to the License tab."
+         ) . "</div>";
    }
 }
