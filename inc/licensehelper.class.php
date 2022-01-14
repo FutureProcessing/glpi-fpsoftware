@@ -1,7 +1,5 @@
 <?php
 
-const SOFTWARE_LICENSE_TABLE = 'glpi_softwarelicenses';
-
 class PluginFpsoftwareLicenseHelper
 {
    /**
@@ -38,7 +36,7 @@ class PluginFpsoftwareLicenseHelper
       $result = $DB->request(
          [
             'SELECT' => 'number',
-            'FROM' => SOFTWARE_LICENSE_TABLE,
+            'FROM' =>  SoftwareLicense::getTable(),
             'WHERE' =>
                ['id' => $this->license_id]
          ]
@@ -74,16 +72,12 @@ class PluginFpsoftwareLicenseHelper
    /**
     * Returns the number of available licenses.
     *
-    * If the number of license is unlimited, it returns false.
+    * Should only be used when unlimited_licenses is equal false.
     *
-    * @return int|bool
+    * @return int
     */
    private function getNumberOfAvailableLicenses(): int
    {
-      if ($this->unlimited_licenses) {
-         return false;
-      }
-
       return $this->getNumberOfLicenses() - $this->getNumberOfAssignedLicenses();
    }
 }
