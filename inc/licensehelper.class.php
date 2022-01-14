@@ -12,16 +12,10 @@ class PluginFpsoftwareLicenseHelper
     */
    public $unlimited_licenses;
 
-   /**
-    * @var bool|int
-    */
-   public $number_of_available_licenses;
-
    public function __construct(int $license_id)
    {
       $this->license_id = $license_id;
       $this->unlimited_licenses = $this->setUnlimitedLicenses();
-      $this->number_of_available_licenses = $this->getNumberOfAvailableLicenses();
    }
 
    private function setUnlimitedLicenses(): bool
@@ -74,10 +68,14 @@ class PluginFpsoftwareLicenseHelper
     *
     * Should only be used when unlimited_licenses is equal false.
     *
-    * @return int
+    * @return int|null
     */
-   private function getNumberOfAvailableLicenses(): int
+   public function getNumberOfAvailableLicenses(): ?int
    {
+      if ($this->unlimited_licenses) {
+         return null;
+      }
+
       return $this->getNumberOfLicenses() - $this->getNumberOfAssignedLicenses();
    }
 }

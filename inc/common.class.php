@@ -419,7 +419,7 @@ class PluginFpsoftwareCommon extends CommonDBRelation {
       $license_helper = new PluginFpsoftwareLicenseHelper($license_id);
       if ($can_edit) {
          if ($license_helper->unlimited_licenses === false &&
-             $license_helper->number_of_available_licenses <= 0) {
+             $license_helper->getNumberOfAvailableLicenses() <= 0) {
             self::displayInfoAboutLicensesLimit();
          } else {
             self::addUserForm($license_id);

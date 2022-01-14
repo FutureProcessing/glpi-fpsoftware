@@ -143,7 +143,7 @@ class PluginFpsoftwareUserdetails extends CommonDBRelation {
       foreach ($licenses as $key => $license_id) {
          $license_helper = new PluginFpsoftwareLicenseHelper($license_id);
          if ($license_helper->unlimited_licenses === false &&
-             $license_helper->number_of_available_licenses <= 0) {
+             $license_helper->getNumberOfAvailableLicenses() <= 0) {
             unset($licenses[$key]);
          }
       }
