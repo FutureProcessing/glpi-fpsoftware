@@ -36,7 +36,7 @@ class PluginFpsoftwareLicenseHelper
       $result = $DB->request(
          [
             'SELECT' => 'number',
-            'FROM' =>  SoftwareLicense::getTable(),
+            'FROM' => SoftwareLicense::getTable(),
             'WHERE' =>
                ['id' => $this->license_id]
          ]
