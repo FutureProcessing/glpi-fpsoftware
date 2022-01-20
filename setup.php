@@ -45,7 +45,7 @@ function plugin_version_fpsoftware()
 {
     return array(
         'name' => "FP Software",
-        'version' => '1.6.0',
+        'version' => '1.6.1',
         'author' => 'Future Processing',
         'license' => 'GPLv2+',
         'homepage' => 'http://www.future-processing.com',
