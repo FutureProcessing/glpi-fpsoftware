@@ -251,8 +251,8 @@ class PluginFpsoftwareUsersLicenses extends CommonDBRelation {
       );
 
       $user_licenses = [];
-      while ($data = $result->next()) {
-         $user_licenses[] = $data['softwarelicenses_id'];
+      foreach ($result as $data => $content) {
+         $user_licenses[] = $content['softwarelicenses_id'];
       }
 
       return $user_licenses;
@@ -280,8 +280,8 @@ class PluginFpsoftwareUsersLicenses extends CommonDBRelation {
       }
 
       $licenses = [];
-      while ($data = $result->next()) {
-         $licenses[] = $data['id'];
+      foreach ($result as $data => $content) {
+         $licenses[] = $content['id'];
       }
 
       return $licenses;
