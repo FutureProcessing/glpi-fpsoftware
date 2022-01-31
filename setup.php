@@ -65,7 +65,7 @@ function plugin_version_fpsoftware()
 function plugin_fpsoftware_check_prerequisites()
 {
     if (version_compare(GLPI_VERSION, '0.84', '<') || version_compare(GLPI_VERSION, '10.0.0', '>=')) {
-        echo "This plugin requires GLPI >= 0.84 and GLPI <= 10.0.0";
+        echo "This plugin requires GLPI >= 0.84 and GLPI >= 10.0.0";
 
         return false;
     }
