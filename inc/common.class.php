@@ -174,8 +174,9 @@ class PluginFpsoftwareCommon extends CommonDBRelation {
       );
 
       $users_assigned_to_a_license = [];
-      while ($data = $result->next()) {
-         $users_assigned_to_a_license[] = $data['users_id'];
+
+      foreach ($result as $data => $content) {
+         $users_assigned_to_a_license[] = $content['users_id'];
       }
 
       if (empty($users_assigned_to_a_license)) {
@@ -188,8 +189,9 @@ class PluginFpsoftwareCommon extends CommonDBRelation {
       }
 
       $users_unassigned_to_a_license = [];
-      while ($data = $result->next()) {
-         $users_unassigned_to_a_license[] = $data['id'];
+
+      foreach ($result as $data => $content) {
+         $users_unassigned_to_a_license[] = $content['id'];
       }
 
       return $users_unassigned_to_a_license;
@@ -409,7 +411,6 @@ class PluginFpsoftwareCommon extends CommonDBRelation {
          return;
       }
 
-      echo "<div class='center'>";
       $can_edit = PluginFpsoftwareVersionhelper::checkRights(
          "software",
          [CREATE, UPDATE, DELETE, PURGE],
@@ -428,9 +429,9 @@ class PluginFpsoftwareCommon extends CommonDBRelation {
 
       $number_of_assigned_licenses = $license_helper->getNumberOfAssignedLicenses();
       if ($number_of_assigned_licenses < 1) {
-         echo "<table class='tab_cadre_fixe'>";
+         echo "<div><table class='tab_cadre_fixe'>";
          echo "<tr><th>" . __('No item found') . "</th></tr>";
-         echo "</table></div>\n";
+         echo "</table></div>" . PHP_EOL;
 
          return;
       }

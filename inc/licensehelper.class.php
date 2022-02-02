@@ -37,8 +37,8 @@ class PluginFpsoftwareLicenseHelper
       );
 
       $number_of_licenses = [];
-      while ($data = $result->next()) {
-         $number_of_licenses[] = $data['number'];
+      foreach ($result as $data => $content) {
+         $number_of_licenses[] = $content['number'];
       }
 
       return $number_of_licenses[0];
