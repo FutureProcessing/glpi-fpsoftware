@@ -49,28 +49,8 @@ function plugin_version_fpsoftware()
         'author' => 'Future Processing',
         'license' => 'GPLv2+',
         'homepage' => 'http://www.future-processing.com',
-        'minGlpiVersion' => '0.84'
-    ); // For compatibility / no install in version < 0.80
-}
-
-/**
- * Blocking a specific version of GLPI.
- * GLPI constantly evolving in terms of functions of the heart, it is advisable
- * to create a plugin blocking the current version, quite to modify the function
- * to a later version of GLPI. In this example, the plugin will be operational
- * with the 0.84 and 0.85 versions of GLPI.
- *
- * @return boolean
- */
-function plugin_fpsoftware_check_prerequisites()
-{
-    if (version_compare(GLPI_VERSION, '0.84', '<') || version_compare(GLPI_VERSION, '10.0.0', '>=')) {
-        echo "This plugin requires GLPI >= 0.84 and GLPI >= 10.0.0";
-
-        return false;
-    }
-
-    return true;
+        'minGlpiVersion' => '9.5'
+    );
 }
 
 /**
